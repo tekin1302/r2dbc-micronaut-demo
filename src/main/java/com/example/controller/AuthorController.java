@@ -5,6 +5,8 @@ import com.example.repository.AuthorRepository;
 import io.micronaut.data.repository.jpa.criteria.PredicateSpecification;
 import io.micronaut.data.repository.jpa.criteria.QuerySpecification;
 import io.micronaut.http.annotation.*;
+import jakarta.persistence.criteria.Order;
+import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -27,7 +29,11 @@ public class AuthorController {
     }
     @Get("/find-query")
     public Flux<Author> findWithQuery() {
-        QuerySpecification<Author> querySpec = ((root, query, criteriaBuilder) -> query.)
+        QuerySpecification<Author> querySpec = ((root, query, criteriaBuilder) -> {
+            Predicate predicate = criteriaBuilder.like(root.get("name"), "John%");
+            query.where(predicate).orderBy(criteriaBuilder.desc(root.get("id")));
+            return predicate;
+        });
         return authorRepository.findAll(querySpec);
     }
 
