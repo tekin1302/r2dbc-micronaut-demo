@@ -3,6 +3,7 @@ package com.example.controller;
 import com.example.entity.Author;
 import com.example.repository.AuthorRepository;
 import io.micronaut.data.repository.jpa.criteria.PredicateSpecification;
+import io.micronaut.data.repository.jpa.criteria.QuerySpecification;
 import io.micronaut.http.annotation.*;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Flux;
@@ -19,10 +20,15 @@ public class AuthorController {
         return authorRepository.findAll();
     }
 
-    @Get("/find-custom")
-    public Flux<Author> findCustom() {
+    @Get("/find-predicate")
+    public Flux<Author> findWithPredicate() {
         PredicateSpecification<Author> predicateSpec = ((root, criteriaBuilder) -> criteriaBuilder.equal(root.get("name"), "John"));
         return authorRepository.findAll(predicateSpec);
+    }
+    @Get("/find-query")
+    public Flux<Author> findWithQuery() {
+        QuerySpecification<Author> querySpec = ((root, query, criteriaBuilder) -> query.)
+        return authorRepository.findAll(querySpec);
     }
 
     @Get("/{id}")
